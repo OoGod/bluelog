@@ -21,6 +21,7 @@ from bluelog.blueprints.blog import blog_bp
 from bluelog.extensions import bootstrap, db, login_manager, csrf, ckeditor, mail, moment, toolbar, migrate
 from bluelog.models import Admin, Post, Category, Comment, Link
 from bluelog.settings import config
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
@@ -31,6 +32,7 @@ def create_app(config_name=None):
 
     app = Flask('bluelog')
     app.config.from_object(config[config_name])
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
     register_logging(app)
     register_extensions(app)
